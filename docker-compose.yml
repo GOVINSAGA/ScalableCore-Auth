@@ -1,0 +1,32 @@
+services:
+  backend:
+    container_name: backend-api
+    build: ./BackendAPI
+    ports:
+      - "5002:5000"
+    depends_on:
+      - db
+    restart: always
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=appdb;Username=postgres;Password=postgres
+
+  frontend:
+    container_name: frontend-ui
+    build: ./frontend
+    ports:
+      - "3000:80"
+    restart: always
+
+  db:
+    container_name: postgres-db
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
