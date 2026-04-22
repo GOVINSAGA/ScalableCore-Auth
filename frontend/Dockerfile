@@ -1,9 +1,11 @@
 # Build stage
-FROM node:22-alpine AS build
+FROM node:22 AS build
 WORKDIR /app
 
-COPY . .
+COPY package*.json ./
 RUN npm install
+
+COPY . .
 RUN npm run build
 
 # Serve stage
