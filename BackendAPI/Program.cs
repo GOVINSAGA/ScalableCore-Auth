@@ -62,6 +62,16 @@ namespace BackendAPI
                 });
             builder.Services.AddEndpointsApiExplorer();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             // ==========================================================
             // 3. NEW SWAGGER CONFIGURATION FOR JWT
             // ==========================================================
@@ -95,6 +105,12 @@ namespace BackendAPI
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                db.Database.Migrate();
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -103,6 +119,8 @@ namespace BackendAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             // ==========================================================
             // 4. ADD MIDDLEWARE HERE
