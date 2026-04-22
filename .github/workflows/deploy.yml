@@ -43,7 +43,18 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
             cd ~
+
+            echo "Stopping old containers..."
+            docker-compose -f docker-compose.prod.yml down
+
+            echo "Pulling latest images..."
             docker-compose -f docker-compose.prod.yml pull
+
+            echo "Starting new containers..."
             docker-compose -f docker-compose.prod.yml up -d
+
+            echo "Cleaning unused images..."
+            docker image prune -f
