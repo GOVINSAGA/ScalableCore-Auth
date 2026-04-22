@@ -5,7 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BackendAPI.Auth;
 using BackendAPI.Services;
-using Microsoft.OpenApi.Models; // <-- 1. Added this namespace
+using BackendAPI.Repositories; // <-- 1. Added this namespace for Step 10
+using Microsoft.OpenApi.Models;
 
 namespace BackendAPI
 {
@@ -20,10 +21,15 @@ namespace BackendAPI
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // ==========================================================
-            // 2. ADD YOUR AUTHENTICATION SERVICES HERE
+            // 2. ADD YOUR SERVICES & REPOSITORIES HERE
             // ==========================================================
             builder.Services.AddScoped<JwtService>();
             builder.Services.AddScoped<AuthService>();
+
+            // --- NEW ADDITIONS FOR STEP 10 ---
+            builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+            builder.Services.AddScoped<TaskService>();
+            // ---------------------------------
 
             builder.Services.AddAuthentication(options =>
             {

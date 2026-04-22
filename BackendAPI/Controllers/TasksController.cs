@@ -1,9 +1,7 @@
-﻿// Controllers/TasksController.cs
+﻿using BackendAPI.Services;
+using BackendAPI.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using BackendAPI.Data;
-using BackendAPI.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace BackendAPI.Controllers;
@@ -13,11 +11,11 @@ namespace BackendAPI.Controllers;
 [Authorize]
 public class TasksController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly TaskService _service;
 
-    public TasksController(AppDbContext context)
+    public TasksController(TaskService service)
     {
-        _context = context;
+        _service = service;
     }
 
     private int GetUserId()
@@ -28,57 +26,28 @@ public class TasksController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetTasks()
     {
-        var userId = GetUserId();
-
-        var tasks = await _context.Tasks
-            .Where(t => t.UserId == userId)
-            .ToListAsync();
-
-        return Ok(tasks);
+        var result = await _service.GetTasks(GetUserId());
+        return Ok(result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(TaskItem task)
+    public async Task<IActionResult> Create(CreateTaskDto dto)
     {
-        task.UserId = GetUserId();
-
-        _context.Tasks.Add(task);
-        await _context.SaveChangesAsync();
-
-        return Ok(task);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, TaskItem updated)
-    {
-        var userId = GetUserId();
-
-        var task = await _context.Tasks.FindAsync(id);
-
-        if (task == null || task.UserId != userId)
-            return NotFound();
-
-        task.Title = updated.Title;
-        task.Description = updated.Description;
-
-        await _context.SaveChangesAsync();
-
-        return Ok(task);
+        var result = await _service.Create(GetUserId(), dto);
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var userId = GetUserId();
+        var result = await _service.Delete(id, GetUserId());
+        return Ok(result);
+    }
 
-        var task = await _context.Tasks.FindAsync(id);
-
-        if (task == null || task.UserId != userId)
-            return NotFound();
-
-        _context.Tasks.Remove(task);
-        await _context.SaveChangesAsync();
-
-        return Ok("Deleted");
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, UpdateTaskDto dto)
+    {
+        var result = await _service.Update(id, GetUserId(), dto);
+        return Ok(result);
     }
 }
