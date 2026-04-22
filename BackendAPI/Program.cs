@@ -54,8 +54,12 @@ namespace BackendAPI
 
             builder.Services.AddAuthorization();
             // ==========================================================
-
-            builder.Services.AddControllers();
+           
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.SuppressModelStateInvalidFilter = false;
+                });
             builder.Services.AddEndpointsApiExplorer();
 
             // ==========================================================
@@ -107,6 +111,7 @@ namespace BackendAPI
             app.UseAuthorization();
             // ==========================================================
 
+            app.UseMiddleware<ExceptionMiddleware>();
             app.MapControllers();
 
             app.Run();

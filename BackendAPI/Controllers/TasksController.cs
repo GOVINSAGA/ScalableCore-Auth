@@ -1,5 +1,6 @@
-﻿using BackendAPI.Services;
-using BackendAPI.DTOs;
+﻿using BackendAPI.DTOs;
+using BackendAPI.Models;
+using BackendAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -27,27 +28,47 @@ public class TasksController : ControllerBase
     public async Task<IActionResult> GetTasks()
     {
         var result = await _service.GetTasks(GetUserId());
-        return Ok(result);
+        return Ok(new ApiResponse<object>
+        {
+            Success = true,
+            Message = "Tasks fetched successfully",
+            Data = result
+        });
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateTaskDto dto)
     {
         var result = await _service.Create(GetUserId(), dto);
-        return Ok(result);
+        return Ok(new ApiResponse<object>
+        {
+            Success = true,
+            Message = "Tasks created successfully",
+            Data = result
+        });
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _service.Delete(id, GetUserId());
-        return Ok(result);
+        return Ok(new ApiResponse<object>
+        {
+            Success = true,
+            Message = "Tasks deleted successfully",
+            Data = result
+        });
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, UpdateTaskDto dto)
     {
         var result = await _service.Update(id, GetUserId(), dto);
-        return Ok(result);
+        return Ok(new ApiResponse<object>
+        {
+            Success = true,
+            Message = "Tasks updated successfully",
+            Data = result
+        });
     }
 }
