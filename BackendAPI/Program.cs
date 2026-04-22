@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BackendAPI.Auth;
-using BackendAPI.Services; // Ensure this is here so it finds your AuthService
+using BackendAPI.Services;
+using Microsoft.OpenApi.Models; // <-- 1. Added this namespace
 
 namespace BackendAPI
 {
@@ -19,10 +20,10 @@ namespace BackendAPI
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // ==========================================================
-            // 2. ADD YOUR AUTHENTICATION SERVICES HERE (Before builder.Build)
+            // 2. ADD YOUR AUTHENTICATION SERVICES HERE
             // ==========================================================
             builder.Services.AddScoped<JwtService>();
-            builder.Services.AddScoped<AuthService>(); // Don't forget your AuthService!
+            builder.Services.AddScoped<AuthService>();
 
             builder.Services.AddAuthentication(options =>
             {
@@ -50,7 +51,37 @@ namespace BackendAPI
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            // ==========================================================
+            // 3. NEW SWAGGER CONFIGURATION FOR JWT
+            // ==========================================================
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter your token in the text input below.\r\n\r\nExample: '12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
 
             var app = builder.Build();
 
@@ -64,8 +95,7 @@ namespace BackendAPI
             app.UseHttpsRedirection();
 
             // ==========================================================
-            // 3. ADD MIDDLEWARE HERE
-            // Note: UseAuthentication MUST come strictly before UseAuthorization
+            // 4. ADD MIDDLEWARE HERE
             // ==========================================================
             app.UseAuthentication();
             app.UseAuthorization();
