@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
@@ -13,8 +15,9 @@ export default function Login() {
             });
 
             localStorage.setItem("token", res.data.data.token);
-            alert("Login successful");
+            navigate("/dashboard");   // redirect
         } catch (err) {
+            console.error(err);
             alert("Login failed");
         }
     };
