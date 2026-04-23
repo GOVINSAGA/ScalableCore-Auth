@@ -147,3 +147,97 @@ Secure backend design
 Scalable architecture
 Full-stack integration
 Cloud deployment readiness
+
+🔹 API Endpoints
+🔐 Authentication APIs
+1️⃣ Register User
+POST /api/v1/auth/register
+
+Request Body:
+
+{
+  "name": "Govind",
+  "email": "govind@example.com",
+  "password": "123456"
+}
+
+Response:
+
+{
+  "success": true,
+  "message": "User registered successfully"
+}
+2️⃣ Login User
+POST /api/v1/auth/login
+
+Request Body:
+
+{
+  "email": "govind@example.com",
+  "password": "123456"
+}
+
+Response:
+
+{
+  "success": true,
+  "data": {
+    "token": "JWT_TOKEN"
+  }
+}
+🔐 Protected APIs (Require JWT)
+
+👉 Header:
+
+Authorization: Bearer <your_token>
+📋 Task APIs (CRUD)
+3️⃣ Get All Tasks
+GET /api/v1/tasks
+
+Response:
+
+[
+  {
+    "id": 1,
+    "title": "Task 1"
+  }
+]
+4️⃣ Create Task
+POST /api/v1/tasks
+
+Request Body:
+
+{
+  "title": "New Task"
+}
+5️⃣ Update Task
+PUT /api/v1/tasks/{id}
+
+Request Body:
+
+{
+  "title": "Updated Task"
+}
+6️⃣ Delete Task
+DELETE /api/v1/tasks/{id}
+🧠 API Design Highlights
+
+Add this section:
+
+## 📌 API Design Highlights
+
+- RESTful endpoints with proper HTTP methods
+- JWT-based authentication for protected routes
+- Consistent API response format
+- DTO-based validation for request safety
+- Global exception handling middleware
+🔥 Bonus (VERY GOOD FOR INTERVIEW)
+
+Add:
+
+## 🔒 Security Practices
+
+- Password hashing using BCrypt
+- JWT token validation (issuer, audience, expiry)
+- Protected endpoints using [Authorize]
+- CORS configured for frontend integration
