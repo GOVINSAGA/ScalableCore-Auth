@@ -5,7 +5,7 @@ import api from "../api/axios";
 export default function Dashboard() {
     const [tasks, setTasks] = useState([]);
     const [title, setTitle] = useState("");
-    const [description, setDescription] = useState(""); // ✅ NEW
+    const [description, setDescription] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,6 +23,7 @@ export default function Dashboard() {
             setTasks(res.data.data);
         } catch (err) {
             console.error(err);
+            alert("Failed to fetch tasks");
         }
     };
 
@@ -35,7 +36,7 @@ export default function Dashboard() {
         try {
             await api.post("/tasks", {
                 title,
-                description // ✅ FIXED
+                description
             });
 
             setTitle("");
@@ -53,6 +54,7 @@ export default function Dashboard() {
             fetchTasks();
         } catch (err) {
             console.error(err);
+            alert("Delete failed");
         }
     };
 
@@ -65,40 +67,60 @@ export default function Dashboard() {
         try {
             await api.put(`/tasks/${id}`, {
                 title: newTitle,
-                description: newDesc // ✅ FIXED
+                description: newDesc
             });
             fetchTasks();
         } catch (err) {
             console.error(err);
+            alert("Update failed");
         }
     };
 
+    // 🔥 LOGOUT FUNCTION
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    };
+
     return (
-        <div>
-            <h2>Dashboard</h2>
+        <div style={{ padding: "20px" }}>
+            {/* 🔥 Header with Logout */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h2>Dashboard</h2>
+                <button onClick={handleLogout}>Logout</button>
+            </div>
 
-            {/* ✅ Inputs */}
-            <input
-                placeholder="Task title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-            />
+            {/* ✅ Add Task Section */}
+            <div style={{ marginTop: "20px" }}>
+                <input
+                    placeholder="Task title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
 
-            <input
-                placeholder="Task description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-            />
+                <input
+                    placeholder="Task description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    style={{ marginLeft: "10px" }}
+                />
 
-            <button onClick={addTask}>Add</button>
+                <button onClick={addTask} style={{ marginLeft: "10px" }}>
+                    Add
+                </button>
+            </div>
 
-            {/* ✅ Task list */}
-            <ul>
+            {/* ✅ Task List */}
+            <ul style={{ marginTop: "20px" }}>
                 {tasks.map((t) => (
-                    <li key={t.id}>
+                    <li key={t.id} style={{ marginBottom: "10px" }}>
                         <b>{t.title}</b> - {t.description}
-                        <button onClick={() => updateTask(t.id)}>Update</button>
-                        <button onClick={() => deleteTask(t.id)}>Delete</button>
+                        <button onClick={() => updateTask(t.id)} style={{ marginLeft: "10px" }}>
+                            Update
+                        </button>
+                        <button onClick={() => deleteTask(t.id)} style={{ marginLeft: "5px" }}>
+                            Delete
+                        </button>
                     </li>
                 ))}
             </ul>
