@@ -315,3 +315,26 @@ Add:
 - UI styling using Tailwind CSS
 - Better form validation
 - Loading states & spinners
+
+
+📖 API Documentation
+🔹 Swagger UI
+
+Interactive API documentation is available via Swagger.
+
+👉 Access here:
+
+http://129.159.226.234:5002/swagger
+🔐 Using Swagger with JWT
+Register a user using /api/v1/auth/register
+Login via /api/v1/auth/login
+Copy the JWT token from response
+Click Authorize in Swagger
+Enter:
+Bearer <your_token>
+Now you can access protected APIs
+🔹 Available API Groups
+Authentication APIs
+Task Management APIs (CRUD)
+🔹 Example Flow (Swagger Testing)
+Register → Login → Copy Token → Authorize → Access Protected APIs
