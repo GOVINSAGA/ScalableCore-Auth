@@ -38,7 +38,7 @@ public class AuthService
         return "User registered successfully";
     }
 
-    public async Task<AuthResponseDto> Login(LoginDto dto)
+    public async Task<ApiResponse<AuthResponseDto>> Login(LoginDto dto)
     {
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email == dto.Email);
@@ -48,11 +48,15 @@ public class AuthService
 
         var token = _jwt.GenerateToken(user);
 
-        return new AuthResponseDto
+        return new ApiResponse<AuthResponseDto>
         {
-            Token = token,
-            Email = user.Email,
-            Role = user.Role
+            Success = true,
+            Data = new AuthResponseDto
+            {
+                Token = token,
+                Email = user.Email,
+                Role = user.Role
+            }
         };
     }
 }
