@@ -54,7 +54,7 @@ namespace BackendAPI
 
             builder.Services.AddAuthorization();
             // ==========================================================
-           
+
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
                 {
@@ -93,6 +93,18 @@ namespace BackendAPI
                 });
             });
 
+            builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://129.159.226.234:3000") // your frontend URL
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -102,16 +114,18 @@ namespace BackendAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
+            app.UseMiddleware<ExceptionMiddleware>();
             // ==========================================================
             // 4. ADD MIDDLEWARE HERE
             // ==========================================================
+            app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
             // ==========================================================
 
-            app.UseMiddleware<ExceptionMiddleware>();
+
             app.MapControllers();
 
             app.Urls.Add("http://0.0.0.0:5000");
