@@ -241,3 +241,77 @@ Add:
 - JWT token validation (issuer, audience, expiry)
 - Protected endpoints using [Authorize]
 - CORS configured for frontend integration
+
+
+🌐 Frontend UI
+
+A simple React-based frontend is implemented to interact with the backend APIs.
+
+🔹 Features
+User Registration
+User Login (JWT authentication)
+Protected Dashboard
+Task Management (Create, Read, Update, Delete)
+API integration using Axios
+Automatic JWT token attachment via interceptor
+🔹 Application Flow
+Home Page
+   ↓
+Register → Redirect to Login
+   ↓
+Login → Store JWT Token
+   ↓
+Dashboard (Protected)
+   ↓
+Perform CRUD Operations
+🔹 Screens Overview
+🏠 Home Page
+Provides navigation to Login and Register
+🔐 Login Page
+Authenticates user
+Stores JWT token in localStorage
+📝 Register Page
+Creates a new user
+Redirects to login
+📋 Dashboard
+Accessible only after login
+Displays tasks
+Supports:
+Create task
+Update task
+Delete task
+🔹 API Integration
+Base URL:
+http://129.159.226.234:5002/api/v1
+Axios instance with interceptor:
+Automatically attaches JWT token
+Handles secure API calls
+🔹 Protected Routing
+Dashboard route is protected
+Redirects to login if token is missing
+if (!token) navigate("/login");
+🔹 Tech Stack
+React (Vite)
+Axios
+React Router DOM
+🔹 Live Frontend
+http://129.159.226.234:3000
+🧠 What this shows evaluator
+Feature	Status
+Frontend exists	✅
+Connected to backend	✅
+Auth flow	✅
+Protected routes	✅
+CRUD UI	✅
+
+👉 This proves full-stack capability
+
+🔥 Bonus (Optional but strong)
+
+Add:
+
+## 🚀 Future Improvements (Frontend)
+
+- UI styling using Tailwind CSS
+- Better form validation
+- Loading states & spinners
