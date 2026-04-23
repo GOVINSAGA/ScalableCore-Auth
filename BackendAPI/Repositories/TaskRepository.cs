@@ -43,4 +43,10 @@ public class TaskRepository : ITaskRepository
         _context.Tasks.Remove(task);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<TaskItem>> GetAll()
+{
+    return await _context.Tasks.ToListAsync();
+}
+
 }

@@ -7,6 +7,10 @@ export default function Dashboard() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const navigate = useNavigate();
+    const role = localStorage.getItem("role");
+    const [loading, setLoading] = useState(false);
+    const [message, setMessage] = useState("");
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -34,17 +38,22 @@ export default function Dashboard() {
         }
 
         try {
+            setLoading(true);
+
             await api.post("/tasks", {
                 title,
                 description
             });
 
+            setMessage("Task added successfully"); // ✅ HERE
             setTitle("");
             setDescription("");
             fetchTasks();
         } catch (err) {
             console.error(err);
             alert("Failed to add task");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -86,9 +95,18 @@ export default function Dashboard() {
         <div style={{ padding: "20px" }}>
             {/* 🔥 Header with Logout */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h2>Dashboard</h2>
+                <div>
+                    <h2>Dashboard</h2>
+                    <h3>Logged in as: {role}</h3> {/* ✅ HERE */}
+                </div>
                 <button onClick={handleLogout}>Logout</button>
+
             </div>
+
+            {message && <p style={{ color: "green" }}>{message}</p>}
+
+
+            {loading && <p>Loading...</p>}
 
             {/* ✅ Add Task Section */}
             <div style={{ marginTop: "20px" }}>
@@ -110,19 +128,27 @@ export default function Dashboard() {
                 </button>
             </div>
 
-            {/* ✅ Task List */}
             <ul style={{ marginTop: "20px" }}>
-                {tasks.map((t) => (
-                    <li key={t.id} style={{ marginBottom: "10px" }}>
-                        <b>{t.title}</b> - {t.description}
-                        <button onClick={() => updateTask(t.id)} style={{ marginLeft: "10px" }}>
-                            Update
-                        </button>
-                        <button onClick={() => deleteTask(t.id)} style={{ marginLeft: "5px" }}>
-                            Delete
-                        </button>
-                    </li>
-                ))}
+                {tasks.length === 0 ? (
+                    <p>No tasks found</p>  // ✅ HERE
+                ) : (
+                    tasks.map((t) => (
+                        <li key={t.id} style={{ marginBottom: "10px" }}>
+                            <b>{t.title}</b> - {t.description}
+
+                            <button onClick={() => updateTask(t.id)} style={{ marginLeft: "10px" }}>
+                                Update
+                            </button>
+
+                            {/* 🔥 Role-based UI (optional) */}
+                            {(role === "Admin" || true) && (
+                                <button onClick={() => deleteTask(t.id)} style={{ marginLeft: "5px" }}>
+                                    Delete
+                                </button>
+                            )}
+                        </li>
+                    ))
+                )}
             </ul>
         </div>
     );

@@ -24,10 +24,21 @@ public class TasksController : ControllerBase
         return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
     }
 
+    private string GetUserRole()
+    {
+        return User.FindFirst(ClaimTypes.Role)?.Value;
+    }
+
+    // ✅ GET TASKS (Role-based)
     [HttpGet]
     public async Task<IActionResult> GetTasks()
     {
-        var result = await _service.GetTasks(GetUserId());
+        var role = GetUserRole();
+
+        var result = role == "Admin"
+            ? await _service.GetAllTasks()        // 👑 Admin sees all
+            : await _service.GetTasks(GetUserId()); // 👤 User sees own
+
         return Ok(new ApiResponse<object>
         {
             Success = true,
@@ -36,38 +47,55 @@ public class TasksController : ControllerBase
         });
     }
 
+    // ✅ CREATE TASK (Both roles)
+    [Authorize(Roles = "User,Admin")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateTaskDto dto)
     {
         var result = await _service.Create(GetUserId(), dto);
+
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "Tasks created successfully",
+            Message = "Task created successfully",
             Data = result
         });
     }
 
+    // ✅ DELETE TASK (Admin OR Owner)
+    [Authorize(Roles = "User,Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _service.Delete(id, GetUserId());
+        var role = GetUserRole();
+
+        var result = role == "Admin"
+            ? await _service.DeleteAsAdmin(id)         // 👑 Admin can delete any
+            : await _service.Delete(id, GetUserId());  // 👤 User only own
+
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "Tasks deleted successfully",
+            Message = "Task deleted successfully",
             Data = result
         });
     }
 
+    // ✅ UPDATE TASK (Admin OR Owner)
+    [Authorize(Roles = "User,Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, UpdateTaskDto dto)
     {
-        var result = await _service.Update(id, GetUserId(), dto);
+        var role = GetUserRole();
+
+        var result = role == "Admin"
+            ? await _service.UpdateAsAdmin(id, dto)        // 👑 Admin update any
+            : await _service.Update(id, GetUserId(), dto); // 👤 User only own
+
         return Ok(new ApiResponse<object>
         {
             Success = true,
-            Message = "Tasks updated successfully",
+            Message = "Task updated successfully",
             Data = result
         });
     }

@@ -10,4 +10,6 @@ public interface ITaskRepository
     Task Add(TaskItem task);
     Task Update(TaskItem task);
     Task Delete(TaskItem task);
+
+    Task<List<TaskItem>> GetAll();
 }
