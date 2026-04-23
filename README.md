@@ -338,3 +338,59 @@ Authentication APIs
 Task Management APIs (CRUD)
 🔹 Example Flow (Swagger Testing)
 Register → Login → Copy Token → Authorize → Access Protected APIs
+
+🧠 Scalability & System Design
+
+This project is designed with scalability and extensibility in mind. Below are key considerations for scaling the system in a production environment.
+
+🔹 1. Modular Architecture
+
+The backend follows a layered architecture:
+
+Controller → Service → Repository → Database
+Separation of concerns
+Easy to extend with new modules
+Maintainable and testable
+🔹 2. Database Scalability
+PostgreSQL used with EF Core (Code First)
+Can scale using:
+Read replicas
+Connection pooling
+Query optimization
+🔹 3. Authentication Scalability
+JWT-based stateless authentication
+No server-side session storage required
+Suitable for horizontal scaling
+🔹 4. Containerization (Docker)
+Backend, frontend, and database are containerized
+Ensures consistent environment across development and production
+Easy deployment and scaling using container orchestration
+🔹 5. CI/CD Pipeline
+Automated build and deployment using GitHub Actions
+Docker images pushed to Docker Hub
+OCI VM pulls latest images and updates containers
+🔹 6. Horizontal Scaling (Future)
+Multiple backend instances behind a load balancer
+Stateless APIs allow easy scaling
+Client → Load Balancer → Multiple API Instances → Database
+🔹 7. Caching (Future Enhancement)
+Redis can be added to:
+Cache frequently accessed data (e.g., tasks)
+Reduce database load
+Improve response time
+🔹 8. Logging & Monitoring (Future)
+Centralized logging (e.g., Serilog + ELK stack)
+Monitoring using tools like Prometheus & Grafana
+🔹 9. Security Enhancements
+Role-based access control (Admin/User) (planned)
+Rate limiting
+HTTPS enforcement
+Token refresh mechanism
+🔹 10. Microservices (Future Evolution)
+
+The system can be split into services:
+
+Auth Service
+Task Service
+Notification Service
+API Gateway → Auth Service → Task Service → Database
